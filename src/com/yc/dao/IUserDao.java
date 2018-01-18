@@ -19,7 +19,7 @@ import com.yc.bean.User;
  * @date 2018年1月17日  
  *    
 */
-public interface UserDao {
+public interface IUserDao {
 
 	/**
 	 * @throws SQLException 
@@ -31,5 +31,25 @@ public interface UserDao {
 	 * @throws
 	 */
 	User getUserByName(String userName) throws SQLException;
+
+	/**
+	 * @throws SQLException   
+	 * @Title: getUserByEmail  
+	 * @Description: 根据邮箱查询对应用户对象  
+	 * @param email
+	 * @return 返回类型User   没找到为null     
+	 * @throws  
+	 */  
+	User getUserByEmail(String email) throws SQLException;
+
+	/**
+	 * @throws SQLException   
+	 * @Title: insertUser  
+	 * @Description: 数据库插入用户  
+	 * @param user
+	 * @return 返回类型int  影响行数      
+	 * @throws  
+	 */  
+	int insertUser(User user) throws SQLException;
 
 }

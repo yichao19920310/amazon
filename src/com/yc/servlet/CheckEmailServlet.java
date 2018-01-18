@@ -7,27 +7,29 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.yc.biz.IUserBiz;
+import com.yc.biz.impl.UserBizImpl;
+
 /**
- * Servlet implementation class CheckCodeServlet
+ * Servlet implementation class CheckEmailServlet
  */
-@WebServlet("/checkCode")
-public class CheckCodeServlet extends HttpServlet {
+@WebServlet("/CheckEmail")
+public class CheckEmailServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	private static final String VERY_CODE_RIGHT = "1";
-	private static final String VERY_CODE_WRONG = "0";
+	private static IUserBiz iub = new UserBizImpl();
+	private static final String EMAIL_IS_EXSIT = "1";
+	private static final String EMAIL_IS_NOT_EXSIT = "0";
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String validateCode = request.getSession().getAttribute("validateCode").toString();
-		String veryCode = request.getParameter("veryCode");
-		if(veryCode==null||validateCode==null||"".equals(veryCode)||"".equals(validateCode)){
-			response.getWriter().write(VERY_CODE_WRONG);
-		}else if(veryCode.equals(validateCode)){
-			response.getWriter().write(VERY_CODE_RIGHT);
+		String email = request.getParameter("email");
+		boolean isExist = iub.checkEmail(email);
+		if(isExist){			
+			response.getWriter().write(EMAIL_IS_EXSIT);
 		}else{
-			response.getWriter().write(VERY_CODE_WRONG);
+			response.getWriter().write(EMAIL_IS_NOT_EXSIT);
 		}
 	}
 
@@ -35,6 +37,7 @@ public class CheckCodeServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		doGet(request, response);
 	}
 

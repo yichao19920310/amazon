@@ -11,8 +11,8 @@ package com.yc.biz.impl;
 import java.sql.SQLException;
 
 import com.yc.bean.User;
-import com.yc.biz.UserBiz;
-import com.yc.dao.UserDao;
+import com.yc.biz.IUserBiz;
+import com.yc.dao.IUserDao;
 import com.yc.dao.impl.UserDaoImpl;
 
 /**  
@@ -22,9 +22,9 @@ import com.yc.dao.impl.UserDaoImpl;
  * @date 2018年1月17日  
  *    
 */
-public class UserBizImpl implements UserBiz {
+public class UserBizImpl implements IUserBiz {
 
-	private static UserDao udi = new UserDaoImpl();
+	private static IUserDao iud = new UserDaoImpl();
 	
 	/* (非 Javadoc)  
 	 * <p>Title: checkName</p>  
@@ -35,9 +35,12 @@ public class UserBizImpl implements UserBiz {
 	*/  
 	@Override
 	public boolean checkName(String userName) {
+		if(userName==null||"".equals(userName)){
+			return false;
+		}
 		User u = null;
 		try {
-			u = udi.getUserByName(userName);
+			u = iud.getUserByName(userName);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -46,6 +49,92 @@ public class UserBizImpl implements UserBiz {
 		}else{
 			return true;
 		}		
+	}
+
+	/* (非 Javadoc)  
+	 * <p>Title: login</p>  
+	 * <p>Description: </p>  
+	 * @param user
+	 * @return  
+	 * @see com.yc.biz.UserBiz#login(com.yc.bean.User)  
+	*/  
+	@Override
+	public User login(User user) {
+		String userName = user.getHu_user_name();
+		String passWord = user.getHu_password();
+		if(userName==null||passWord==null||"".equals(userName)||"".equals(passWord)){
+			return null;
+		}
+		User tempUser = null;
+		try {
+			tempUser = iud.getUserByName(userName);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		if(tempUser == null){
+			//用户名不存在
+			return null;
+		}
+		if(passWord.equals(tempUser.getHu_password())){
+			//密码匹配
+			return tempUser;
+		}else{
+			//密码不匹配
+			return null;
+		}
+		
+	}
+
+	/* (非 Javadoc)  
+	 * <p>Title: checkEmail</p>  
+	 * <p>Description: </p>  
+	 * @param email
+	 * @return  
+	 * @see com.yc.biz.UserBiz#checkEmail(java.lang.String)  
+	*/  
+	@Override
+	public boolean checkEmail(String email) {
+		if(email==null||"".equals(email)){
+			throw new IllegalArgumentException();
+		}
+		User user = null;
+		try {
+			user = iud.getUserByEmail(email);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		if(user==null){
+			return false;
+		}else{
+			return true;
+		}
+		
+	}
+
+	/* (非 Javadoc)  
+	 * <p>Title: register</p>  
+	 * <p>Description: </p>  
+	 * @param user
+	 * @return  
+	 * @see com.yc.biz.IUserBiz#register(com.yc.bean.User)  
+	*/  
+	@Override
+	public boolean register(User user) {
+		if(user==null){
+			return false;
+		}
+		int row = 0;
+		try {
+			row = iud.insertUser(user);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		if(row==0){
+			return false;
+		}else{
+			return true;
+		}
+		
 	}
 
 }

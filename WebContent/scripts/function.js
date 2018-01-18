@@ -11,6 +11,7 @@ function FocusItem(obj) {
 	var msgBox = obj.parentNode.getElementsByTagName("span")[0];
 	msgBox.innerHTML = "";
 	msgBox.className = "";
+	//msgBox.style.display = "none";
 }
 
 function Checkexist() {
@@ -25,12 +26,14 @@ function Checkexist() {
 		success : function(test) {
 			if (test == 1) {
 				var msgBox = document.getElementById("uName");
-				msgBox.style.display = "inline";
+				//msgBox.style.display = "inline";
+				msgBox.className = "error";
 				msgBox.innerHTML = "用户名已存在！";
 				flag= false;
 			} else {
 				var msgBox = document.getElementById("uName");
-				msgBox.style.display = "inline";
+				//msgBox.style.display = "none";
+				//msgBox.className = "error";
 				msgBox.innerHTML = null;
 			}
 		},// 响应成功后执行的回调方法data响应文本
@@ -53,6 +56,20 @@ function CheckItem(obj) {
 	var regName = /^[a-zA-Z][a-zA-Z0-9]{2,15}$/;
 	var regPass = /^[a-zA-Z0-9]{4,10}$/;
 	switch (obj.name) {
+	case "logUserName":
+		if (obj.value == "" || regName.test(obj.value) == false) {
+			msgBox.innerHTML = "用户名不能为空并且只能是字母开头和字母数字结尾，长度在3-15之间";
+			msgBox.className = "error";
+			return false;
+		}
+		break;
+	case "logPassWord":
+		if (obj.value == "" || regPass.test(obj.value) == false) {
+			msgBox.innerHTML = "密码不能为空并且不能含有非法字符，长度在4-10之间";
+			msgBox.className = "error";
+			return false;
+		}
+		break;
 	case "userName":
 		if (obj.value == "" || regName.test(obj.value) == false) {
 			msgBox.innerHTML = "用户名不能为空并且只能是字母开头和字母数字结尾，长度在3-15之间";
@@ -138,6 +155,7 @@ function checkForm(frm) {
 			if (!CheckItem(els[i]))
 				return false;
 	}
+	//myFormPost();
 	return true;
 }
 
@@ -188,19 +206,20 @@ function emailExist() {
 	$.ajax({
 		url : "CheckEmail",// 请求的servlet地址
 		type : "GET",// 请求方式
-		data : "" + email,// 发送到服务器的数据
+		data : "email=" + email,// 发送到服务器的数据
 		async: false,
 		dataType : "text",// 设置返回数据类型
 		success : function(test) {
 			if (test == 1) {
 				var msgBox = document.getElementById("uemail");
-				msgBox.style.display = "inline";
+				//msgBox.style.display = "inline";
+				msgBox.className = "error";
 				msgBox.innerHTML = "该邮箱已经注册！";
 				flag= false;
 			} else {
 				var msgBox = document.getElementById("uemail");
-				msgBox.style.display = "inline";
-				msgBox.innerHTML = null;
+				//msgBox.style.display = "inline";
+				msgBox.innerHTML = "";
 				
 			}
 		},// 响应成功后执行的回调方法data响应文本
@@ -223,18 +242,21 @@ function checkValidateCode() {
 		url : "checkCode",// 请求的servlet地址
 		type : "GET",// 请求方式
 		async: false,
-		data : "" + veryCode,// 发送到服务器的数据
+		data : "veryCode=" + veryCode,// 发送到服务器的数据
 		dataType : "text",// 设置返回数据类型
 		success : function(test) {
 			if (test != 1) {
 				var msgBox = document.getElementById("Code");
-				msgBox.style.display = "inline";
+				
+				msgBox.className ="error";
+				//msgBox.style.display = "inline";				
 				msgBox.innerHTML = "验证码错误！";
 				flag= false;
 			} else {
 				var msgBox = document.getElementById("Code");
-				msgBox.style.display = "inline";
-				msgBox.innerHTML = null;
+				//msgBox.style.display = "none";
+				msgBox.className = "";
+				msgBox.innerHTML = "";
 			}
 		}
 	})
@@ -244,12 +266,12 @@ function checkValidateCode() {
 
 function loginCheck(){
 	
-	if($("[name=userName]").val()==""){
+	if($("[name=logUserName]").val()==""){
 		alert("请输入用户名！")
 		return false;
 	}
 	
-	if($("[name=passWord]").val()==""){
+	if($("[name=logPassWord]").val()==""){
 		alert("请输入用户密码！")
 		return false;
 	}
@@ -264,5 +286,8 @@ function loginCheck(){
 	
 }
 
-
+function refreshCode(img){
+	var num = Math.random()*1000;
+	img.src="code.jsp?="+num;
+}
 

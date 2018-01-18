@@ -31,12 +31,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				<li class="current"><em></em>填写注册信息</li>
 				<li class="last"><em></em>注册成功</li>
 			</ul>
-			<form id="regForm" method="post" action="doAction?action=register" ><!-- onsubmit="return checkForm(this)" -->
+			<form id="regForm" action="doAction?action=register" method="post"  onsubmit="return checkForm(this)"><!-- onsubmit="return checkForm(this)" -->
 				<table>
 					<tr>
 						<td class="field">用户名：</td>
 						<!-- onfocus="FocusItem(this)" " -->
-						<td><input  id="userName" class="text" type="text" name="userName"   maxlength="15" onblur="CheckItem(this);"/><span id="uName"></span></td>
+						<td><input  id="userName" class="text" type="text" name="userName"   maxlength="15" onblur="CheckItem(this);" onfocus="FocusItem(this)"/><span id="uName"></span></td>
 					</tr>
 					<tr>
 						<td class="field">登录密码：</td>
@@ -61,7 +61,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					<tr>
 						<td class="field">电子邮件：</td>
 						<!-- onfocus="FocusItem(this)" onblur="CheckItem(this);" -->
-						<td><input value="sa@sina.com" class="text" type="text" name="email"  onmouseout="checkEmail()"/><span id="uemail"></span></td>
+						<td><input value="sa@sina.com" class="text" type="text" name="email"  onfocus="FocusItem(this)" onblur="CheckItem(this);"/><span id="uemail"></span></td>
 					</tr>
 					<tr>
 						<td class="field">手机：</td>
@@ -73,11 +73,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					</tr>
 					<tr>
 						<td class="field">验证码：</td>
-						<td><input class="text verycode" type="text" name="veryCode" onfocus="FocusItem(this)" onblur="CheckItem(this);" maxlength="4"/><img id="veryCode" src="code.jsp" /><span id="Code"></span></td>
+						<td><input class="text verycode" type="text" name="veryCode" onfocus="FocusItem(this)" onblur="CheckItem(this);" maxlength="4"/><img id="veryCode" src="code.jsp" onclick="refreshCode(this)"/><span id="Code"></span></td>
 					</tr>
 					<tr>
 						<td></td>
-						<td><label class="ui-green"><input type="button" name="submit" value="提交注册" onclick="myFormPost()"/></label></td>
+						<td><label class="ui-green"><input type="submit" name="submit" value="提交注册"/></label></td>
 					</tr>
 				</table>
 			</form>

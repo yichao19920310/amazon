@@ -26,20 +26,20 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<div class="box">
 			<h1>欢迎回到亚马逊</h1>
 			<!-- onsubmit="return loginCheck()" -->
-			<form id="loginForm" method="post" action="doAction?action=login" >
+			<form id="loginForm" method="post" action="doAction?action=login" onsubmit="return loginCheck()">
 				<table>
 					<tr>
 						<td class="field">用户名：</td>
-						<td><input class="text" type="text" name="userName" onfocus="FocusItem(this)" onblur="CheckItem(this)" id="userName"; /><span id="uName"></span></td>
+						<td><input class="text" type="text" name="logUserName" onfocus="FocusItem(this)" onblur="CheckItem(this)" id="userName"; /><span id="uName"></span></td>
 					</tr>
 					<tr>
 						<td class="field">登录密码：</td>
-						<td><input class="text" type="password" id="passWord" name="passWord" onfocus="FocusItem(this)" onblur="CheckItem(this);" /><a href="retrieve_password.jsp">忘记密码</a></td>
+						<td><input class="text" type="password" id="passWord" name="logPassWord" onfocus="FocusItem(this)" onblur="CheckItem(this);" /><a href="retrieve_password.jsp">忘记密码</a><span id="passWord"></span></td>
 		
 					</tr>
 					<tr>           
 						<td class="field">验证码：</td>
-						<td><input class="text verycode" type="text" name="veryCode" onfocus="FocusItem(this)" onblur="CheckItem(this);" maxlength="4"/><img id="veryCode" src="code.jsp" /><span id="Code"></span></td>
+						<td><input class="text verycode" type="text" name="veryCode" onfocus="FocusItem(this)" onblur="CheckItem(this);" maxlength="4"/><img id="veryCode" src="code.jsp" onclick="refreshCode(this)"/><span id="Code"></span></td>
 					</tr>
 					<tr>
 						<td></td>
