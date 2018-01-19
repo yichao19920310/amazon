@@ -38,7 +38,7 @@
 				<li><img src="images/icon_4.png"><a
 					href="javascript:AddFavorite('我的网站',location.href)">收藏</a></li>
 				<li><img src="images/icon_2.png"><a href="guestbook.jsp">留言</a></li>
-				<li><img src="images/icon_1.png"><a href="index.jsp">首页</a></li>
+				<li><img src="images/icon_1.png"><a href="doAction">首页</a></li>
 			</ul>
 		</div>
 	</div>
@@ -58,7 +58,7 @@
 				<c:if test="${requestScope.hotProducts!=null }">
 					<c:forEach items="${requestScope.hotProducts }" var="p" end="2">
 						<li>|</li>
-						<li><a href="pview?pId=${p.hpId }" target="_self">${p.hpName }</a></li>
+						<li><a href="pview?pId=${p.hp_id }" target="_self">${p.hp_name }</a></li>
 					</c:forEach>
 				</c:if>
 

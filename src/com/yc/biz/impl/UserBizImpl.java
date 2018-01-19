@@ -9,7 +9,10 @@
 package com.yc.biz.impl;
 
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
+import com.yc.bean.Category;
 import com.yc.bean.User;
 import com.yc.biz.IUserBiz;
 import com.yc.dao.IUserDao;
@@ -137,4 +140,5 @@ public class UserBizImpl implements IUserBiz {
 		
 	}
 
+	
 }

@@ -8,6 +8,10 @@
 */  
 package com.yc.biz;
 
+import java.util.List;
+import java.util.Map;
+
+import com.yc.bean.Category;
 import com.yc.bean.User;
 
 /**  
@@ -54,5 +58,7 @@ public interface IUserBiz {
 	 * @throws  
 	 */  
 	boolean register(User user);
+
+	
 
 }

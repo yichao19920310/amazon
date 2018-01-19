@@ -4,15 +4,26 @@ import java.io.IOException;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import com.yc.bean.Category;
+import com.yc.bean.News;
+import com.yc.bean.Pager;
+import com.yc.bean.Product;
 import com.yc.bean.User;
+import com.yc.biz.ICategoryBiz;
+import com.yc.biz.INewsBiz;
+import com.yc.biz.IProductBiz;
 import com.yc.biz.IUserBiz;
+import com.yc.biz.impl.CategoryBizImpl;
+import com.yc.biz.impl.NewsBizImpl;
+import com.yc.biz.impl.ProductBizImpl;
 import com.yc.biz.impl.UserBizImpl;
 
 /**
@@ -23,39 +34,178 @@ public class ActionServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	private static IUserBiz iub = new UserBizImpl();
-	
-	private static final String USERNAME_IS_EXSIT = "1";
-	private static final String USERNAME_IS_NOT_EXSIT = "0";
+	private static ICategoryBiz icb = new CategoryBizImpl();
+	private static IProductBiz ipb = new ProductBizImpl();
+	private static INewsBiz inb = new NewsBizImpl();
+	private static final String USERNAME_IS_EXIST = "1";
+	private static final String USERNAME_IS_NOT_EXIST = "0";
+	private static final String CATE_PARENT = "parent";
+	private static final String CATE_CHILD = "child";
+	private static final String CATE_ALL = "";
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String action = request.getParameter("action");
-		switch(action){
-		case "login":
-			login(request,response);
-			break;
-		case "register":
-			try {
-				register(request,response);
-			} catch (ParseException e) {
-				e.printStackTrace();
+		if(action==null){
+			initIndex(request,response);
+		}else{
+			switch(action){
+			case "login":
+				login(request,response);
+				break;
+			case "register":
+				try {
+					register(request,response);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				break;
+			case "checkName":
+				checkName(request,response);
+				break;
+			case "checkOut":
+				checkOut(request,response);
+				break;
+			case "readNews":
+				readNew(request,response);
+				break;
+			default:
+				break;
 			}
-			break;
-		case "checkName":
-			checkName(request,response);
-			break;
-		case "checkOut":
-			checkOut(request,response);
-			break;
 		}
+		
+	}
+
+	/**  
+	 * @Title: readNew  
+	 * @Description: 查看新闻内容  
+	 * @param request
+	 * @param response 返回类型void        
+	 * @throws  
+	 */  
+	private void readNew(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @throws IOException 
+	 * @throws ServletException   
+	 * @Title: initIndex  
+	 * @Description: 为首次访问初始化主页相关页面数据  
+	 * @param request
+	 * @param response 返回类型void        
+	 * @throws  
+	 */  
+	private void initIndex(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//商品类别
+		Map<Category,List<Category>> cMap = icb.getCategoryMap();
+		request.getSession().setAttribute("cMap", cMap);
+		//新闻
+		List<News> news = inb.getAllNews();
+		request.setAttribute("news", news);
+		//热卖
+		List<Product> hotProducts = ipb.showHotProduct();
+		request.setAttribute("hotProducts", hotProducts);
+		//商品列表
+		String cate = request.getParameter("cate");
+		if(cate==null||CATE_ALL.equals(cate)){
+			//查询类别为空,即查询全部
+			showAllProduct(request);
+		}else if(CATE_PARENT.equals(cate)){
+			//查询类别为大类
+			showProductByParent(request);
+		}else if(CATE_CHILD.equals(cate)){
+			//查询类别为小类
+			showProductByChild(request);
+		}
+		request.getRequestDispatcher("index.jsp").forward(request, response);
+		
+		
+	}
+
+	/**  
+	 * @Title: showProductByChild  
+	 * @Description: 查询指定子类商品
+	 * @param request 返回类型void        
+	 * @throws  
+	 */  
+	private void showProductByChild(HttpServletRequest request) {
+		String hpcId = request.getParameter("hpcId");
+		int childId = 0;
+		if(hpcId!=null && !"".equals(hpcId)){
+			childId = Integer.parseInt(hpcId);
+		}
+		
+		int pageNum = 1;// 默认下标页为第一页
+		String page = request.getParameter("page");
+		if (page != null && !"".equals(page)) {
+			pageNum = Integer.parseInt(page);
+		}
+		Pager pager = new Pager(pageNum);// 构建一个分页对象Pager
+		// 2.调用业务层完成数据的查询
+		List<Product> pList = ipb.showProductByChild(pager,childId);
+		// 7.将page和List存入request域中
+		request.setAttribute("pList", pList);
+		request.setAttribute("pager", pager);
+		
+		
+	}
+
+	/**  
+	 * @Title: showProductByParent  
+	 * @Description: 查询指定父类商品
+	 * @param request 返回类型void        
+	 * @throws  
+	 */  
+	private void showProductByParent(HttpServletRequest request) {
+		String hpcId = request.getParameter("hpcId");
+		int parentId = 0;
+		if(hpcId!=null && !"".equals(hpcId)){
+			parentId = Integer.parseInt(hpcId);
+		}
+		
+		int pageNum = 1;// 默认下标页为第一页
+		String page = request.getParameter("page");
+		if (page != null && !"".equals(page)) {
+			pageNum = Integer.parseInt(page);
+		}
+		Pager pager = new Pager(pageNum);// 构建一个分页对象Pager
+		// 2.调用业务层完成数据的查询
+		List<Product> pList = ipb.showProductByParent(pager,parentId);
+		// 7.将page和List存入request域中
+		request.setAttribute("pList", pList);
+		request.setAttribute("pager", pager);
+		
+		
+	}
+
+	/**  
+	 * @Title: showAllProduct  
+	 * @Description: 查询所有商品  
+	 * @param request 返回类型void        
+	 * @throws  
+	 */  
+	private void showAllProduct(HttpServletRequest request) {
+		int pageNum = 1;// 默认下标页为第一页
+		String page = request.getParameter("page");
+		if (page != null && !"".equals(page)) {
+			pageNum = Integer.parseInt(page);
+		}
+		Pager pager = new Pager(pageNum);// 构建一个分页对象Pager
+		// 2.调用业务层完成数据的查询
+		List<Product> pList = ipb.showAllProduct(pager);
+		// 7.将page和List存入request域中
+		request.setAttribute("pList", pList);
+		request.setAttribute("pager", pager);
 	}
 
 	/**
 	 * @throws IOException 
 	 * @throws ParseException   
 	 * @Title: register  
-	 * @Description: TODO(这里用一句话描述这个方法的作用)  
+	 * @Description: 执行注册操作  
 	 * @param request
 	 * @param response 返回类型void        
 	 * @throws  
@@ -75,7 +225,7 @@ public class ActionServlet extends HttpServlet {
 		User user = new User(userName,passWord,sex,birthday,identity,email,mobile,address);
 		boolean isSuccess = iub.register(user);
 		if(isSuccess){
-			response.getWriter().write("<script>alert('注册成功!');document.location.href='index.jsp';</script>");
+			response.getWriter().write("<script>alert('注册成功!');document.location.href='doAction';</script>");
 		}else{
 			response.getWriter().write("<script>alert('注册失败!');document.location.href='register.jsp';</script>");
 		}
@@ -107,9 +257,9 @@ public class ActionServlet extends HttpServlet {
 		String userName = request.getParameter("userName");
 		boolean isExist = iub.checkName(userName);
 		if(isExist){
-			response.getWriter().write(USERNAME_IS_EXSIT);
+			response.getWriter().write(USERNAME_IS_EXIST);
 		}else{
-			response.getWriter().write(USERNAME_IS_NOT_EXSIT);
+			response.getWriter().write(USERNAME_IS_NOT_EXIST);
 		}
 		
 	}
@@ -137,7 +287,7 @@ public class ActionServlet extends HttpServlet {
 			request.getSession().setAttribute("user", user);
 			
 			//response.sendRedirect("index.jsp");
-			response.getWriter().write("<script>alert('登录成功!');document.location.href='index.jsp';</script>");
+			response.getWriter().write("<script>alert('登录成功!');document.location.href='doAction';</script>");
 		}
 		
 		

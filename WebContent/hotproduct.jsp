@@ -10,13 +10,13 @@
 				<li>
 					<dl>
 						<dt>
-							<a href="pview?pId=${p.hpId }" target="_self"><img
-								src="${p.hpFileName }" /></a>
+							<a href="pview?pId=${p.hp_id }" target="_self"><img
+								src="${p.hp_file_name }" /></a>
 						</dt>
 						<dd class="p_name">
-							<a href="pview?pId=${p.hpId }" target="_self">${p.hpName }</a>
+							<a href="pview?pId=${p.hp_id }" target="_self">${p.hp_name }</a>
 						</dd>
-						<dd class="price">￥${p.hpPrice }</dd>
+						<dd class="price">￥${p.hp_price }</dd>
 					</dl>
 				</li>
 			</c:forEach>
