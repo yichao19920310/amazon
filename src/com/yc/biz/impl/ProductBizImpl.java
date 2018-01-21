@@ -11,10 +11,13 @@ package com.yc.biz.impl;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.yc.bean.Category;
 import com.yc.bean.Pager;
 import com.yc.bean.Product;
 import com.yc.biz.IProductBiz;
+import com.yc.dao.ICategoryDao;
 import com.yc.dao.IProductDao;
+import com.yc.dao.impl.CategoryDaoImpl;
 import com.yc.dao.impl.ProductDaoImpl;
 
 /**  
@@ -27,6 +30,7 @@ import com.yc.dao.impl.ProductDaoImpl;
 public class ProductBizImpl implements IProductBiz {
 
 	private static IProductDao ipd = new ProductDaoImpl();
+	private static ICategoryDao icd = new CategoryDaoImpl();
 	/* (非 Javadoc)  
 	 * <p>Title: showAllProduct</p>  
 	 * <p>Description: </p>  
@@ -119,6 +123,54 @@ public class ProductBizImpl implements IProductBiz {
 			e.printStackTrace();
 		}
 		return pList;
+	}
+	/* (non-Javadoc)
+	 * @see com.yc.biz.IProductBiz#showProductById(int)
+	 */
+	@Override
+	public Product showProductById(int pid) {
+		Product prod = null;
+		Category parent_category = null;
+		Category child_category = null;
+		try {
+			prod = ipd.getProductById(pid);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		if(prod!=null){
+			try {
+				parent_category = icd.getCategoryById(prod.getHpc_id());
+				child_category = icd.getCategoryById(prod.getHpc_child_id());
+				prod.setParent_category(parent_category);
+				prod.setChild_category(child_category);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		return prod;
+	}
+	/* (non-Javadoc)
+	 * @see com.yc.biz.IProductBiz#searchProductByName(java.lang.String, com.yc.bean.Pager)
+	 */
+	@Override
+	public List<Product> searchProductByName(String qname, Pager pager) {
+		List<Product> pList = null;
+		try {
+			//3.获取记录总数
+			int count = ipd.getAllProductQueryCountByName(qname);
+			//4.将总数设置到pager对象中
+			pager.setRecordCount(count);
+			//5.根据当前用户选择的页码算出区间  
+			int start = (pager.getCurrentPage()-1)*Pager.PAGE_RECORD;
+			int end = start+Pager.PAGE_RECORD;
+			//6.调用dao，传入start&end，查询区间集合
+			pList = ipd.getProductQueryListByName(start,end,qname);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return pList;	
 	}
 
 }

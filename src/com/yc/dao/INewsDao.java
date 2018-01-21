@@ -30,4 +30,14 @@ public interface INewsDao {
 	 */  
 	List<News> getAllNews() throws SQLException;
 
+	/**  
+	 * @Title: getNewsById  
+	 * @Description: 根据id获取指定新闻对象 
+	 * @param nId
+	 * @return  News   
+	 * @throws SQLException 
+	 */  
+	
+	News getNewsById(int nId) throws SQLException;
+
 }

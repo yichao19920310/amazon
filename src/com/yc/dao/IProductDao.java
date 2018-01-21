@@ -63,7 +63,7 @@ public interface IProductDao {
 
 	/**  
 	 * @Title: getProductQueryListByChild  
-	 * @Description: TODO(这里用一句话描述这个方法的作用)  
+	 * @Description: 获取页面区间要显示的指定小类的商品集合 
 	 * @param start
 	 * @param end
 	 * @param childId
@@ -74,10 +74,43 @@ public interface IProductDao {
 
 	/**  
 	 * @Title: getHotProduct  
-	 * @Description: TODO(这里用一句话描述这个方法的作用)  
+	 * @Description: 获取热卖商品集合
 	 * @return 返回类型List<Product>        
 	 * @throws  SQLException
 	 */  
 	List<Product> getHotProduct() throws SQLException;
+
+	/**
+	 * @Title: getProductById  
+	 * @Description: 根据id获取指定商品对象 
+	 * @param pid
+	 * @return  返回类型Product   
+	 * @throws SQLException 
+	 */
+	
+	Product getProductById(int pid) throws SQLException;
+
+	/**  
+	 * @Title: getAllProductQueryCountByName  
+	 * @Description: 根据关键字获取商品总数
+	 * @param qname
+	 * @return  返回类型int   
+	 * @throws SQLException 
+	 */  
+	
+	int getAllProductQueryCountByName(String qname)throws SQLException;
+
+	/**
+	 * @throws SQLException   
+	 * @Title: getProductQueryListByName  
+	 * @Description: 获取页面区间要显示的模糊查询出的商品列表
+	 * @param start
+	 * @param end
+	 * @param qname
+	 * @return  返回类型List<Product>   
+	 * @throws  
+	 */  
+	
+	List<Product> getProductQueryListByName(int start, int end, String qname) throws SQLException;
 
 }

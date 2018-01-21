@@ -59,4 +59,25 @@ public interface IProductBiz {
 	 */  
 	List<Product> showHotProduct();
 
+	/**  
+	 * @Title: showProductById  
+	 * @Description: 根据id查看商品详情
+	 * @param pid
+	 * @return  Product   
+	 * @throws  
+	 */  
+	
+	Product showProductById(int pid);
+
+	/**  
+	 * @Title: searchProductByName  
+	 * @Description: 根据关键字模糊查询商品集合
+	 * @param qname
+	 * @param pager
+	 * @return  返回类型List<Product>   
+	 * @throws  
+	 */  
+	
+	List<Product> searchProductByName(String qname, Pager pager);
+
 }

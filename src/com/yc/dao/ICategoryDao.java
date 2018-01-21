@@ -42,4 +42,15 @@ public interface ICategoryDao {
 	 */  
 	List<Category> getChildCategory(Category category) throws SQLException;
 
+	/**
+	 * @throws SQLException   
+	 * @Title: getCategoryById  
+	 * @Description: 通过id获取商品类别对象
+	 * @param hpc_id
+	 * @return  返回类型Category   
+	 * @throws  
+	 */  
+	
+	Category getCategoryById(int hpc_id) throws SQLException;
+
 }

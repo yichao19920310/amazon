@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -68,7 +69,10 @@ public class ActionServlet extends HttpServlet {
 				checkOut(request,response);
 				break;
 			case "readNews":
-				readNew(request,response);
+				readNews(request,response);
+				break;
+			case "productView":
+				productView(request,response);
 				break;
 			default:
 				break;
@@ -77,16 +81,67 @@ public class ActionServlet extends HttpServlet {
 		
 	}
 
-	/**  
-	 * @Title: readNew  
+	/**
+	 * @throws IOException 
+	 * @throws ServletException   
+	 * @Title: productView  
+	 * @Description: 浏览商品详情 
+	 * @param request
+	 * @param response     
+	 * @throws  
+	 */  
+	
+	private void productView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//又要显示上方热卖
+		List<Product> hotProducts = ipb.showHotProduct();
+		request.setAttribute("hotProducts", hotProducts);
+		//主体
+		String pId = request.getParameter("pId");
+		int pid = 0;
+		if(pId!=null && !"".equals(pId)){
+			pid = Integer.parseInt(pId);
+		}
+		Product prod = ipb.showProductById(pid);
+		request.setAttribute("pro", prod);
+		LinkedHashMap<Product,Product> historyMap = (LinkedHashMap<Product,Product>)(request.getSession().getAttribute("historyMap"));
+		if(historyMap==null){
+			historyMap = new LinkedHashMap<Product,Product>(){
+				private static final long serialVersionUID = 1L;  
+		        @Override  
+		        protected boolean removeEldestEntry(Map.Entry<Product,Product> eldest) {  
+		            return size() > 4;  
+		        }  
+			};
+		}
+		historyMap.put(prod, prod);
+		request.getSession().setAttribute("historyMap", historyMap);
+		request.getRequestDispatcher("product_view.jsp").forward(request, response);
+		
+	}
+
+	/**
+	 * @throws IOException 
+	 * @throws ServletException   
+	 * @Title: readNews  
 	 * @Description: 查看新闻内容  
 	 * @param request
 	 * @param response 返回类型void        
 	 * @throws  
 	 */  
-	private void readNew(HttpServletRequest request, HttpServletResponse response) {
-		// TODO Auto-generated method stub
-		
+	private void readNews(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//又要显示新闻列表
+		List<News> newsList = inb.getAllNews();
+		request.setAttribute("newsList", newsList);
+		//主体
+		String nid = request.getParameter("nid");
+		int nId = 0;
+		if(nid!=null && !"".equals(nid)){
+			nId = Integer.parseInt(nid);
+		}
+		News news = inb.getNewsById(nId);
+		System.out.println(news);
+		request.setAttribute("newsInfo", news);
+		request.getRequestDispatcher("news_view.jsp").forward(request, response);
 	}
 
 	/**
@@ -103,8 +158,8 @@ public class ActionServlet extends HttpServlet {
 		Map<Category,List<Category>> cMap = icb.getCategoryMap();
 		request.getSession().setAttribute("cMap", cMap);
 		//新闻
-		List<News> news = inb.getAllNews();
-		request.setAttribute("news", news);
+		List<News> newsList = inb.getAllNews();
+		request.setAttribute("newsList", newsList);
 		//热卖
 		List<Product> hotProducts = ipb.showHotProduct();
 		request.setAttribute("hotProducts", hotProducts);

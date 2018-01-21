@@ -57,7 +57,7 @@
 				</div>
 			</div>
 			<ul class="product2">
-				<c:if test="${requestScope.pageModel.totalPage==0}">
+				<c:if test="${requestScope.searchPager.recordCount==0}">
 					<h4>找不到您搜索的商品！</h4>
 				</c:if>
 				<c:set value="${requestScope.pList}" var="products"></c:set>
@@ -82,30 +82,49 @@
 
 			<!--分页-->
 			<div class="pager">
-				<ul>
+				<c:if test="${!empty requestScope.pager}">
 					<ul>
-						<li><a href="doAction?page=${pager.prevPage }&cate=${param.cate}&hpcId=${param.hpcId}" id="lastPage">上一页</a></li>
-						<c:forEach items="${requestScope.pager.groupList}" var="pl">
-							<!-- 当前页不需要超链接，其他需要做成超链接 -->
-							<c:if test="${pl==pager.currentPage }">
-								<li>${pl}</li>
-							</c:if>
-							<c:if test="${pl!=pager.currentPage }">
-								<li><a href="doAction?page=${pl}&cate=${param.cate}&hpcId=${param.hpcId}">${pl}</a></li> 
-							</c:if>
-						</c:forEach>
-						<li><a href="doAction?page=${pager.nextPage}&cate=${param.cate}&hpcId=${param.hpcId}" id="nextPage">下一页</a></li>
+						<ul>
+							<li><a href="doAction?page=${pager.prevPage }&cate=${param.cate}&hpcId=${param.hpcId}" id="lastPage" onmousedown="lastPage()">上一页</a></li>
+							<c:forEach items="${requestScope.pager.groupList}" var="pl">
+								<!-- 当前页不需要超链接，其他需要做成超链接 -->
+								<c:if test="${pl==pager.currentPage }">
+									<li>${pl}</li>
+								</c:if>
+								<c:if test="${pl!=pager.currentPage }">
+									<li><a href="doAction?page=${pl}&cate=${param.cate}&hpcId=${param.hpcId}">${pl}</a></li> 
+								</c:if>
+							</c:forEach>
+						<li><a href="doAction?page=${pager.nextPage}&cate=${param.cate}&hpcId=${param.hpcId}" id="nextPage" onmousedown="nextPage()">下一页</a></li>
 					</ul>
 				</ul>
-				<input type="hidden" id="source"
-					value="${requestScope.pageModel.source}" /><input type="hidden"
-					id="hpcId" value="${requestScope.pageModel.hpcId}" /> <input
-					type="hidden" id="totalPage"
-					value="${requestScope.pageModel.totalPage}" /> <input
-					type="hidden" id="currentPage"
-					value="${requestScope.pageModel.currentPage}" /> <input
-					type="hidden" id="queryName"
-					value="${requestScope.pageModel.qname}" />
+				</c:if>
+				
+				<c:if test="${!empty requestScope.searchPager && requestScope.searchPager.recordCount!=0}">
+					<ul>
+						<ul>
+							<li><a href="query?page=${searchPager.prevPage }&qname=${param.qname}" id="lastPage" onmousedown="lastPage()">上一页</a></li>
+							<c:forEach items="${requestScope.searchPager.groupList}" var="pl">
+								<!-- 当前页不需要超链接，其他需要做成超链接 -->
+								<c:if test="${pl==searchPager.currentPage }">
+									<li>${pl}</li>
+								</c:if>
+								<c:if test="${pl!=searchPager.currentPage }">
+									<li><a href="query?page=${pl }&qname=${param.qname}">${pl}</a></li> 
+								</c:if>
+							</c:forEach>
+							<li><a href="query?page=${searchPager.nextPage }&qname=${param.qname}" id="nextPage" onmousedown="nextPage()">下一页</a></li>
+						</ul>
+					</ul>
+				</c:if>
+				<input type="hidden" id="totalPage1"
+					value="${requestScope.pager.pageCount}" /> 
+				<input type="hidden" id="currentPage1"
+					value="${requestScope.pager.currentPage}" />				
+				<input type="hidden" id="totalPage"
+					value="${requestScope.searchPager.pageCount}" /> 
+				<input type="hidden" id="currentPage"
+					value="${requestScope.searchPager.currentPage}" />
 			</div>
 		</div>
 

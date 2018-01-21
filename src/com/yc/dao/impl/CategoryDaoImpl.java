@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 
 import com.yc.bean.Category;
@@ -58,6 +59,18 @@ public class CategoryDaoImpl implements ICategoryDao {
 				+ "WHERE HPC_PARENT_ID = ? "
 				+ "AND HPC_ID != HPC_PARENT_ID";
 		return run.query(sql, new BeanListHandler<>(Category.class),category.getHpc_parent_id());
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yc.dao.ICategoryDao#getCategoryById(int)
+	 */
+	@Override
+	public Category getCategoryById(int hpc_id) throws SQLException {
+		QueryRunner run = JDBCUtils.getQueryRunner();
+		String sql = "SELECT HPC_ID,HPC_NAME,HPC_PARENT_ID "
+				+ "FROM HWUA_PRODUCT_CATEGORY "
+				+ "WHERE HPC_ID = ? ";
+		return run.query(sql, new BeanHandler<>(Category.class), hpc_id);
 	}
 
 	

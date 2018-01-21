@@ -25,6 +25,20 @@ public class Product {
 	private int hpc_id;
 	private int hpc_child_id;
 	private String hp_file_name;
+	private Category parent_category;
+	private Category child_category;	
+	public Category getParent_category() {
+		return parent_category;
+	}
+	public void setParent_category(Category parent_category) {
+		this.parent_category = parent_category;
+	}
+	public Category getChild_category() {
+		return child_category;
+	}
+	public void setChild_category(Category child_category) {
+		this.child_category = child_category;
+	}
 	public Product(int hp_id, String hp_name, String hp_description, float hp_price, int hp_stock, int hpc_id,
 			int hpc_child_id, String hp_file_name) {
 		super();

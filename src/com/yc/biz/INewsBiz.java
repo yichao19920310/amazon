@@ -29,4 +29,14 @@ public interface INewsBiz {
 	 */  
 	List<News> getAllNews();
 
+	/**
+	 * 
+	 * @Title: getNewsById  
+	 * @Description: 通过id获取对应新闻对象  
+	 * @param nId
+	 * @return  News   
+	 * @throws
+	 */
+	News getNewsById(int nId);
+
 }

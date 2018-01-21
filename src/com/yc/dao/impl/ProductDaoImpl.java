@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 
 import com.yc.bean.Product;
@@ -160,6 +161,60 @@ public class ProductDaoImpl implements IProductDao {
 				+ "FROM (SELECT HWUA_PRODUCT.* FROM HWUA_PRODUCT ORDER BY HWUA_PRODUCT.HP_PRICE DESC) "
 				+ "WHERE ROWNUM <= 10";
 		return run.query(sql, new BeanListHandler<>(Product.class));
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yc.dao.IProductDao#getProductById(int)
+	 */
+	@Override
+	public Product getProductById(int pid) throws SQLException {
+		QueryRunner run = JDBCUtils.getQueryRunner();
+		String sql = "SELECT HP_ID,HP_NAME,HP_DESCRIPTION,HP_PRICE,"
+				+ "HP_STOCK,HPC_ID,HPC_CHILD_ID,HP_FILE_NAME "
+				+ "FROM HWUA_PRODUCT WHERE HP_ID = ?";
+		return run.query(sql, new BeanHandler<>(Product.class), pid);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yc.dao.IProductDao#getAllProductQueryCountByName(java.lang.String)
+	 */
+	@Override
+	public int getAllProductQueryCountByName(String qname) throws SQLException {
+		int count = -1;
+		//贾琏
+		Connection conn = JDBCUtils.getConnection();
+		String sql = "SELECT COUNT(HP_ID) FROM HWUA_PRODUCT "
+				+ "WHERE HP_NAME LIKE '%'||?||'%' "
+				+ "OR HP_DESCRIPTION LIKE '%'||?||'%'";
+		//欲
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setString(1, qname);
+		ps.setString(2, qname);
+		//执
+		ResultSet rs = ps.executeQuery();
+		//事
+		if(rs.next()){
+			count = rs.getInt(1);
+		}
+		//毙
+		rs.close();
+		ps.close();
+		conn.close();
+		return count;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.yc.dao.IProductDao#getProductQueryListByName(int, int, java.lang.String)
+	 */
+	@Override
+	public List<Product> getProductQueryListByName(int start, int end, String qname) throws SQLException {
+		QueryRunner run = JDBCUtils.getQueryRunner();
+		String sql = "SELECT HP_ID,HP_NAME,HP_DESCRIPTION,HP_PRICE,"
+				+ "HP_STOCK,HPC_ID,HPC_CHILD_ID,HP_FILE_NAME "
+				+ "FROM (SELECT ROWNUM R,HWUA_PRODUCT.* FROM HWUA_PRODUCT "
+				+ "WHERE HP_NAME LIKE '%'||?||'%' OR HP_DESCRIPTION LIKE '%'||?||'%') T "
+				+ "WHERE T.R>? AND T.R<=?";
+		return run.query(sql, new BeanListHandler<>(Product.class),qname,qname,start,end);
 	}
 
 }

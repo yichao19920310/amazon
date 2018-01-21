@@ -58,7 +58,7 @@
 				<c:if test="${requestScope.hotProducts!=null }">
 					<c:forEach items="${requestScope.hotProducts }" var="p" end="2">
 						<li>|</li>
-						<li><a href="pview?pId=${p.hp_id }" target="_self">${p.hp_name }</a></li>
+						<li><a href="doAction?action=productView&pId=${p.hp_id }" target="_self">${p.hp_name }</a></li>
 					</c:forEach>
 				</c:if>
 

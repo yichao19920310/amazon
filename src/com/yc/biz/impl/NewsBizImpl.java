@@ -42,5 +42,19 @@ public class NewsBizImpl implements INewsBiz {
 		}
 		return newsList;
 	}
+	/* (non-Javadoc)
+	 * @see com.yc.biz.INewsBiz#getNewsById(int)
+	 */
+	@Override
+	public News getNewsById(int nId) {
+		News news = null;
+		try {
+			news = ind.getNewsById(nId);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		System.out.println(news);
+		return news;
+	}
 
 }
