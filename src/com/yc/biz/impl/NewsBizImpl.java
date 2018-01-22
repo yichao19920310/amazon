@@ -25,7 +25,7 @@ import com.yc.dao.impl.NewsDaoImpl;
 */
 public class NewsBizImpl implements INewsBiz {
 
-	private static INewsDao ind = new NewsDaoImpl();
+	private static INewsDao iNewsD = new NewsDaoImpl();
 	/* (非 Javadoc)  
 	 * <p>Title: getAllNews</p>  
 	 * <p>Description: </p>  
@@ -36,7 +36,7 @@ public class NewsBizImpl implements INewsBiz {
 	public List<News> getAllNews() {
 		List<News> newsList = null;
 		try {
-			newsList = ind.getAllNews();
+			newsList = iNewsD.getAllNews();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -49,7 +49,7 @@ public class NewsBizImpl implements INewsBiz {
 	public News getNewsById(int nId) {
 		News news = null;
 		try {
-			news = ind.getNewsById(nId);
+			news = iNewsD.getNewsById(nId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

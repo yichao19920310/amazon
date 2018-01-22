@@ -29,8 +29,8 @@ import com.yc.dao.impl.ProductDaoImpl;
 */
 public class ProductBizImpl implements IProductBiz {
 
-	private static IProductDao ipd = new ProductDaoImpl();
-	private static ICategoryDao icd = new CategoryDaoImpl();
+	private static IProductDao iProdD = new ProductDaoImpl();
+	private static ICategoryDao iCateD = new CategoryDaoImpl();
 	/* (非 Javadoc)  
 	 * <p>Title: showAllProduct</p>  
 	 * <p>Description: </p>  
@@ -43,14 +43,14 @@ public class ProductBizImpl implements IProductBiz {
 		List<Product> pList = null;
 		try {
 			//3.获取记录总数
-			int count = ipd.getAllProductQueryCount();
+			int count = iProdD.getAllProductQueryCount();
 			//4.将总数设置到pager对象中
 			pager.setRecordCount(count);
 			//5.根据当前用户选择的页码算出区间  
 			int start = (pager.getCurrentPage()-1)*Pager.PAGE_RECORD;
 			int end = start+Pager.PAGE_RECORD;
 			//6.调用dao，传入start&end，查询区间集合
-			pList = ipd.getProductQueryList(start,end);
+			pList = iProdD.getProductQueryList(start,end);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -69,14 +69,14 @@ public class ProductBizImpl implements IProductBiz {
 		List<Product> pList = null;
 		try {
 			//3.获取记录总数
-			int count = ipd.getAllProductQueryCountByParent(parentId);
+			int count = iProdD.getAllProductQueryCountByParent(parentId);
 			//4.将总数设置到pager对象中
 			pager.setRecordCount(count);
 			//5.根据当前用户选择的页码算出区间  
 			int start = (pager.getCurrentPage()-1)*Pager.PAGE_RECORD;
 			int end = start+Pager.PAGE_RECORD;
 			//6.调用dao，传入start&end，查询区间集合
-			pList = ipd.getProductQueryListByParent(start,end,parentId);
+			pList = iProdD.getProductQueryListByParent(start,end,parentId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -95,14 +95,14 @@ public class ProductBizImpl implements IProductBiz {
 		List<Product> pList = null;
 		try {
 			//3.获取记录总数
-			int count = ipd.getAllProductQueryCountByParent(childId);
+			int count = iProdD.getAllProductQueryCountByParent(childId);
 			//4.将总数设置到pager对象中
 			pager.setRecordCount(count);
 			//5.根据当前用户选择的页码算出区间  
 			int start = (pager.getCurrentPage()-1)*Pager.PAGE_RECORD;
 			int end = start+Pager.PAGE_RECORD;
 			//6.调用dao，传入start&end，查询区间集合
-			pList = ipd.getProductQueryListByChild(start,end,childId);
+			pList = iProdD.getProductQueryListByChild(start,end,childId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -118,7 +118,7 @@ public class ProductBizImpl implements IProductBiz {
 	public List<Product> showHotProduct() {
 		List<Product> pList = null;
 		try {
-			pList = ipd.getHotProduct();
+			pList = iProdD.getHotProduct();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -133,14 +133,14 @@ public class ProductBizImpl implements IProductBiz {
 		Category parent_category = null;
 		Category child_category = null;
 		try {
-			prod = ipd.getProductById(pid);
+			prod = iProdD.getProductById(pid);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		if(prod!=null){
 			try {
-				parent_category = icd.getCategoryById(prod.getHpc_id());
-				child_category = icd.getCategoryById(prod.getHpc_child_id());
+				parent_category = iCateD.getCategoryById(prod.getHpc_id());
+				child_category = iCateD.getCategoryById(prod.getHpc_child_id());
 				prod.setParent_category(parent_category);
 				prod.setChild_category(child_category);
 			} catch (SQLException e) {
@@ -159,14 +159,14 @@ public class ProductBizImpl implements IProductBiz {
 		List<Product> pList = null;
 		try {
 			//3.获取记录总数
-			int count = ipd.getAllProductQueryCountByName(qname);
+			int count = iProdD.getAllProductQueryCountByName(qname);
 			//4.将总数设置到pager对象中
 			pager.setRecordCount(count);
 			//5.根据当前用户选择的页码算出区间  
 			int start = (pager.getCurrentPage()-1)*Pager.PAGE_RECORD;
 			int end = start+Pager.PAGE_RECORD;
 			//6.调用dao，传入start&end，查询区间集合
-			pList = ipd.getProductQueryListByName(start,end,qname);
+			pList = iProdD.getProductQueryListByName(start,end,qname);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

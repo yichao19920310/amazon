@@ -1,9 +1,10 @@
 function addToCart(pid) {
 	
-	var stock=$("#stock").html()
+	var stock=$("#stock").text()
 	var count=$("#count").val()
-	
-	if(parseInt(count)>parseInt(stock)){
+	if(stock==null||stock==""){
+		alert("该商品无货!")
+	}else if(parseInt(count)>parseInt(stock)){
 		alert("您选择的数量超过库存!")
 	}else{
 		$.ajax({
@@ -30,7 +31,14 @@ function addToCart(pid) {
 }
 
 function goingToBuy(pid) {
-	window.location.href="goingToBuy?"+pid+"_"+$("#count").val();
+	var $stock = $("#stock").text();
+	if($stock==0){
+		alert("该商品无货!");
+	}else{
+		var $count = $("#count").val();
+		window.location.href="doAction?action=buyProduct&pid="+pid+"&count="+$count;
+	}
+	//window.location.href="goingToBuy?"+pid+"_"+$("#count").val();
 	
 }
 

@@ -217,4 +217,22 @@ public class ProductDaoImpl implements IProductDao {
 		return run.query(sql, new BeanListHandler<>(Product.class),qname,qname,start,end);
 	}
 
+	/* (非 Javadoc)  
+	 * <p>Title: minusProductQuantity</p>  
+	 * <p>Description: </p>  
+	 * @param pid
+	 * @param quantity
+	 * @return
+	 * @throws SQLException  
+	 * @see com.yc.dao.IProductDao#minusProductQuantity(int, int)  
+	*/  
+	@Override
+	public int minusProductStock(int pid, int quantity) throws SQLException {
+		QueryRunner run =  new QueryRunner();//事务用这个
+		String sql = "UPDATE HWUA_PRODUCT "
+				+ "SET HP_STOCK = HP_STOCK - ? "
+				+ "WHERE HP_ID = ?";
+		return run.update(JDBCUtils.getConnection(),sql,quantity,pid);
+	}
+
 }

@@ -10,11 +10,11 @@
 				<li>
 					<dl>
 						<dt>
-							<a href="pview?pId=${p.hp_id }" target="_self"><img
+							<a href="doAction?action=productView&pId=${p.hp_id }" target="_self"><img
 								src="${p.hp_file_name }" /></a>
 						</dt>
 						<dd class="p_name">
-							<a href="pview?pId=${p.hp_id }" target="_self">${p.hp_name }</a>
+							<a href="doAction?action=productView&pId=${p.hp_id }" target="_self">${p.hp_name }</a>
 						</dd>
 						<dd class="price">￥${p.hp_price }</dd>
 					</dl>
@@ -25,3 +25,4 @@
 
 	</ul>
 </div>
+

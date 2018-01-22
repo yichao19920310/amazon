@@ -30,6 +30,8 @@ function alterCount(cid) {
 		success : function(msg) {
 			if(msg==1){
 			}else{
+				alert("操作失败!");
+				window.location.href="doAction?action=showCart";
 			}
 			//$("#cartCount").html(total);
 		},// 响应成功后执行的回调方法data响应文本
@@ -37,7 +39,7 @@ function alterCount(cid) {
 
 		},// 响应完成后执行的回调方法
 		error : function(XMLHttpRequest, statusText) {
-			alert("操作失败!")
+			alert("操作失败!");
 		}// 响应失败后执行的回调方法
 	})
 }
@@ -52,8 +54,9 @@ function reduce(id){
 		//获取原先值
 		var old=$("#"+id).val()
 		$("#"+id).val(parseInt(old)-1)
+		alterCount(id)
 	}
-	alterCount(id)
+	
 }
 
 //+按钮事件
@@ -65,7 +68,7 @@ function increase(id){
 		$("#"+id).val(parseInt(old)+1)
 		alterCount(id)
 	}else{
-		alert("您选择的数量超过库存!")
+		alert("您选择的数量超过库存!");
 	}
 	
 }
@@ -76,7 +79,10 @@ function checkStock(id){
 	var stock=$("#hpStock"+id).val()//获得库存
 	var old=$("#"+id).val()//获得原来的数量
 	if(parseInt(old)>parseInt(stock)){
-		alert("您选择的数量超过库存!")
+		alert("您选择的数量超过库存!");
+		window.location.href="doAction?action=showCart";
+	}else if(parseInt(old)<1){
+		$("#"+id).val(1);
 	}else{
 		alterCount(id)
 	}

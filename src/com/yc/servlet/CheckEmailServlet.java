@@ -17,7 +17,7 @@ import com.yc.biz.impl.UserBizImpl;
 public class CheckEmailServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	private static IUserBiz iub = new UserBizImpl();
+	private static IUserBiz iUserB = new UserBizImpl();
 	private static final String EMAIL_IS_EXSIT = "1";
 	private static final String EMAIL_IS_NOT_EXSIT = "0";
 	/**
@@ -25,7 +25,7 @@ public class CheckEmailServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String email = request.getParameter("email");
-		boolean isExist = iub.checkEmail(email);
+		boolean isExist = iUserB.checkEmail(email);
 		if(isExist){			
 			response.getWriter().write(EMAIL_IS_EXSIT);
 		}else{

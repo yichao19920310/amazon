@@ -1,7 +1,7 @@
 
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
@@ -26,6 +26,15 @@
 			<div class="pre_look">
 				<h3>最近浏览</h3>
 				<dl>
+					<%-- 倒序行不通...<c:set var="startIndex" value="${fn:length(historyMap)-1 }"></c:set> 
+					<c:forEach items="${historyMap}" var="temp" end="3" varStatus="status">
+						<dt>
+							<img style="width: 54px; height: 54px;" src="${historyMap[startIndex-status.index].value.hp_file_name }" />
+						</dt>
+						<dd>
+							<a href="doAction?action=productView&pId=${historyMap[startIndex-status.index].value.hp_id }">${historyMap[startIndex - status.index].value.hp_name }</a>
+						</dd>
+					</c:forEach> --%>
 					<c:forEach items="${historyMap}" var="temp" end="3">
 						<dt>
 							<img style="width: 54px; height: 54px;" src="${temp.value.hp_file_name }" />
@@ -137,4 +146,5 @@
 	<div id="foot">Copyright © 2016 上海海文 All Rights Reserved.</div>
 </body>
 </html>
+
 

@@ -23,8 +23,8 @@ import com.yc.biz.impl.ProductBizImpl;
 @WebServlet("/query")
 public class SearchServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static INewsBiz inb = new NewsBizImpl();
-	private static IProductBiz ipb = new ProductBizImpl();
+	private static INewsBiz iNewsB = new NewsBizImpl();
+	private static IProductBiz iProdB = new ProductBizImpl();
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
@@ -32,10 +32,10 @@ public class SearchServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// 新闻
-		List<News> newsList = inb.getAllNews();
+		List<News> newsList = iNewsB.getAllNews();
 		request.setAttribute("newsList", newsList);
 		// 热卖
-		List<Product> hotProducts = ipb.showHotProduct();
+		List<Product> hotProducts = iProdB.showHotProduct();
 		request.setAttribute("hotProducts", hotProducts);
 		// 商品列表
 		int pageNum = 1;// 默认下标页为第一页
@@ -45,7 +45,7 @@ public class SearchServlet extends HttpServlet {
 		}
 		Pager pager = new Pager(pageNum);// 构建一个分页对象Pager
 		String qname = request.getParameter("qname");
-		List<Product> pList = ipb.searchProductByName(qname,pager);
+		List<Product> pList = iProdB.searchProductByName(qname,pager);
 		request.setAttribute("pList", pList);
 		request.setAttribute("searchPager", pager);
 		request.getRequestDispatcher("index.jsp").forward(request, response);

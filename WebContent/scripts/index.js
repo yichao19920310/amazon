@@ -42,7 +42,7 @@ function nextPage() {
 
 function queryProducts() {
 	var qname = $("#qname").val();
-	if (qname == null) {
+	if (qname == "") {
 		alert("请输入想要搜索的商品名!");
 	} else {
 		window.location.href = "query?qname=" + qname;

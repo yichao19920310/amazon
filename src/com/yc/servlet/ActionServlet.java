@@ -13,15 +13,19 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.yc.bean.Cart;
 import com.yc.bean.Category;
 import com.yc.bean.News;
 import com.yc.bean.Pager;
 import com.yc.bean.Product;
 import com.yc.bean.User;
+import com.yc.biz.ICartBiz;
 import com.yc.biz.ICategoryBiz;
 import com.yc.biz.INewsBiz;
 import com.yc.biz.IProductBiz;
 import com.yc.biz.IUserBiz;
+import com.yc.biz.impl.CartBizImpl;
 import com.yc.biz.impl.CategoryBizImpl;
 import com.yc.biz.impl.NewsBizImpl;
 import com.yc.biz.impl.ProductBizImpl;
@@ -34,15 +38,18 @@ import com.yc.biz.impl.UserBizImpl;
 public class ActionServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	private static IUserBiz iub = new UserBizImpl();
-	private static ICategoryBiz icb = new CategoryBizImpl();
-	private static IProductBiz ipb = new ProductBizImpl();
-	private static INewsBiz inb = new NewsBizImpl();
+	private static IUserBiz iUserB = new UserBizImpl();
+	private static ICategoryBiz iCateB = new CategoryBizImpl();
+	private static IProductBiz iProdB = new ProductBizImpl();
+	private static INewsBiz iNewsB = new NewsBizImpl();
+	private static ICartBiz iCartB = new CartBizImpl();
 	private static final String USERNAME_IS_EXIST = "1";
 	private static final String USERNAME_IS_NOT_EXIST = "0";
 	private static final String CATE_PARENT = "parent";
 	private static final String CATE_CHILD = "child";
 	private static final String CATE_ALL = "";
+	private static final String SUCCESS = "1";
+	private static final String FAILED = "0";
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -74,10 +81,127 @@ public class ActionServlet extends HttpServlet {
 			case "productView":
 				productView(request,response);
 				break;
+			case "showCart":
+				showCart(request,response);
+				break;	
+			case "buyProduct":
+				buyProduct(request,response);
+				break;
+			case "shoppingCart":
+				shoppingCart(request,response);
+				break;
+			case "changeCartCount":
+				changeCartCount(request,response);
 			default:
 				break;
 			}
 		}
+		
+	}
+
+	/**
+	 * @throws IOException   
+	 * @Title: changeCartCount  
+	 * @Description: 修改购物车商品数 
+	 * @param request
+	 * @param response 返回类型void        
+	 * @throws  
+	 */  
+	private void changeCartCount(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String cid = request.getParameter("cid");
+		String count = request.getParameter("count");
+		int cartId = 0;
+		int quantity = 0;
+		if(cid!=null && !"".equals(cid)){
+			cartId = Integer.parseInt(cid);
+		}
+		if(count!=null && !"".equals(count)){
+			quantity = Integer.parseInt(count);
+		}
+		boolean isSuccess = iCartB.changeCartCount(cartId,quantity);
+		if(isSuccess){
+			response.getWriter().write(SUCCESS);
+		}else{
+			response.getWriter().write(FAILED);
+		}
+	}
+
+	/**
+	 * @throws IOException   
+	 * @Title: shoppingCart  
+	 * @Description: 添加到购物车 
+	 * @param request
+	 * @param response 返回类型void        
+	 * @throws  
+	 */  
+	private void shoppingCart(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String pid = request.getParameter("pid");
+		int pId = 0;
+		if(pid!=null && !"".equals(pid)){
+			pId = Integer.parseInt(pid);
+		}
+		String count = request.getParameter("count");
+		int counts = 0;
+		if(count!=null && !"".equals(count)){
+			counts = Integer.parseInt(count);
+		}
+		User user = (User)(request.getSession().getAttribute("user"));		
+		boolean isSuccess = false;
+		if(user!=null){
+			Cart cart = new Cart(pId,counts,user.getHu_user_id());
+			isSuccess = iCartB.addCart(cart);
+		}
+		if(isSuccess){
+			response.getWriter().write(SUCCESS);
+		}else{
+			response.getWriter().write(FAILED);
+		}
+	}
+
+	/**  
+	 * @Title: buyProduct  
+	 * @Description: 购买单个商品 
+	 * @param request
+	 * @param response 返回类型void        
+	 * @throws  
+	 */  
+	private void buyProduct(HttpServletRequest request, HttpServletResponse response) {
+		String pid = request.getParameter("pid");
+		int pId = 0;
+		if(pid!=null && !"".equals(pid)){
+			pId = Integer.parseInt(pid);
+		}
+		String count = request.getParameter("count");
+		int counts = 0;
+		if(count!=null && !"".equals(count)){
+			counts = Integer.parseInt(count);
+		}
+		User user = (User)(request.getSession().getAttribute("user"));		
+		Cart cart = null;
+		if(user!=null){
+			//unfinished
+		}
+		
+		
+	}
+
+	/**
+	 * @throws IOException 
+	 * @throws ServletException   
+	 * @Title: showCart  
+	 * @Description: 显示购物车 
+	 * @param request
+	 * @param response 返回类型void        
+	 * @throws  
+	 */  
+	private void showCart(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User user = (User)(request.getSession().getAttribute("user"));
+		List<Cart> cart = null;
+		if(user!=null){
+			cart = iCartB.showCart(user);
+		}
+		request.setAttribute("cart", cart);
+		request.getRequestDispatcher("shopping.jsp").forward(request, response);
 		
 	}
 
@@ -93,7 +217,7 @@ public class ActionServlet extends HttpServlet {
 	
 	private void productView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//又要显示上方热卖
-		List<Product> hotProducts = ipb.showHotProduct();
+		List<Product> hotProducts = iProdB.showHotProduct();
 		request.setAttribute("hotProducts", hotProducts);
 		//主体
 		String pId = request.getParameter("pId");
@@ -101,7 +225,7 @@ public class ActionServlet extends HttpServlet {
 		if(pId!=null && !"".equals(pId)){
 			pid = Integer.parseInt(pId);
 		}
-		Product prod = ipb.showProductById(pid);
+		Product prod = iProdB.showProductById(pid);
 		request.setAttribute("pro", prod);
 		LinkedHashMap<Product,Product> historyMap = (LinkedHashMap<Product,Product>)(request.getSession().getAttribute("historyMap"));
 		if(historyMap==null){
@@ -130,7 +254,7 @@ public class ActionServlet extends HttpServlet {
 	 */  
 	private void readNews(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//又要显示新闻列表
-		List<News> newsList = inb.getAllNews();
+		List<News> newsList = iNewsB.getAllNews();
 		request.setAttribute("newsList", newsList);
 		//主体
 		String nid = request.getParameter("nid");
@@ -138,7 +262,7 @@ public class ActionServlet extends HttpServlet {
 		if(nid!=null && !"".equals(nid)){
 			nId = Integer.parseInt(nid);
 		}
-		News news = inb.getNewsById(nId);
+		News news = iNewsB.getNewsById(nId);
 		System.out.println(news);
 		request.setAttribute("newsInfo", news);
 		request.getRequestDispatcher("news_view.jsp").forward(request, response);
@@ -155,13 +279,13 @@ public class ActionServlet extends HttpServlet {
 	 */  
 	private void initIndex(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//商品类别
-		Map<Category,List<Category>> cMap = icb.getCategoryMap();
+		Map<Category,List<Category>> cMap = iCateB.getCategoryMap();
 		request.getSession().setAttribute("cMap", cMap);
 		//新闻
-		List<News> newsList = inb.getAllNews();
+		List<News> newsList = iNewsB.getAllNews();
 		request.setAttribute("newsList", newsList);
 		//热卖
-		List<Product> hotProducts = ipb.showHotProduct();
+		List<Product> hotProducts = iProdB.showHotProduct();
 		request.setAttribute("hotProducts", hotProducts);
 		//商品列表
 		String cate = request.getParameter("cate");
@@ -200,7 +324,7 @@ public class ActionServlet extends HttpServlet {
 		}
 		Pager pager = new Pager(pageNum);// 构建一个分页对象Pager
 		// 2.调用业务层完成数据的查询
-		List<Product> pList = ipb.showProductByChild(pager,childId);
+		List<Product> pList = iProdB.showProductByChild(pager,childId);
 		// 7.将page和List存入request域中
 		request.setAttribute("pList", pList);
 		request.setAttribute("pager", pager);
@@ -228,7 +352,7 @@ public class ActionServlet extends HttpServlet {
 		}
 		Pager pager = new Pager(pageNum);// 构建一个分页对象Pager
 		// 2.调用业务层完成数据的查询
-		List<Product> pList = ipb.showProductByParent(pager,parentId);
+		List<Product> pList = iProdB.showProductByParent(pager,parentId);
 		// 7.将page和List存入request域中
 		request.setAttribute("pList", pList);
 		request.setAttribute("pager", pager);
@@ -250,7 +374,7 @@ public class ActionServlet extends HttpServlet {
 		}
 		Pager pager = new Pager(pageNum);// 构建一个分页对象Pager
 		// 2.调用业务层完成数据的查询
-		List<Product> pList = ipb.showAllProduct(pager);
+		List<Product> pList = iProdB.showAllProduct(pager);
 		// 7.将page和List存入request域中
 		request.setAttribute("pList", pList);
 		request.setAttribute("pager", pager);
@@ -278,7 +402,7 @@ public class ActionServlet extends HttpServlet {
 		String mobile = request.getParameter("mobile");
 		String address = request.getParameter("address");
 		User user = new User(userName,passWord,sex,birthday,identity,email,mobile,address);
-		boolean isSuccess = iub.register(user);
+		boolean isSuccess = iUserB.register(user);
 		if(isSuccess){
 			response.getWriter().write("<script>alert('注册成功!');document.location.href='doAction';</script>");
 		}else{
@@ -296,7 +420,7 @@ public class ActionServlet extends HttpServlet {
 	 */  
 	private void checkOut(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		request.getSession().invalidate();
-		response.sendRedirect("index.jsp");
+		response.sendRedirect("doAction");
 		
 	}
 
@@ -310,7 +434,7 @@ public class ActionServlet extends HttpServlet {
 	 */  
 	private void checkName(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String userName = request.getParameter("userName");
-		boolean isExist = iub.checkName(userName);
+		boolean isExist = iUserB.checkName(userName);
 		if(isExist){
 			response.getWriter().write(USERNAME_IS_EXIST);
 		}else{
@@ -331,7 +455,7 @@ public class ActionServlet extends HttpServlet {
 		String userName = request.getParameter("logUserName");
 		String passWord = request.getParameter("logPassWord");
 		User user = new User(userName,passWord); 
-		user = iub.login(user);
+		user = iUserB.login(user);
 		if(user==null){
 			//登录失败
 			

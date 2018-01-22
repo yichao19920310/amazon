@@ -27,7 +27,7 @@ import com.yc.dao.impl.UserDaoImpl;
 */
 public class UserBizImpl implements IUserBiz {
 
-	private static IUserDao iud = new UserDaoImpl();
+	private static IUserDao iUserD = new UserDaoImpl();
 	
 	/* (非 Javadoc)  
 	 * <p>Title: checkName</p>  
@@ -43,7 +43,7 @@ public class UserBizImpl implements IUserBiz {
 		}
 		User u = null;
 		try {
-			u = iud.getUserByName(userName);
+			u = iUserD.getUserByName(userName);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -70,7 +70,7 @@ public class UserBizImpl implements IUserBiz {
 		}
 		User tempUser = null;
 		try {
-			tempUser = iud.getUserByName(userName);
+			tempUser = iUserD.getUserByName(userName);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -102,7 +102,7 @@ public class UserBizImpl implements IUserBiz {
 		}
 		User user = null;
 		try {
-			user = iud.getUserByEmail(email);
+			user = iUserD.getUserByEmail(email);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -128,7 +128,7 @@ public class UserBizImpl implements IUserBiz {
 		}
 		int row = 0;
 		try {
-			row = iud.insertUser(user);
+			row = iUserD.insertUser(user);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

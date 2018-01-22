@@ -27,7 +27,7 @@ import com.yc.dao.impl.CategoryDaoImpl;
 */
 public class CategoryBizImpl implements ICategoryBiz {
 
-	private static ICategoryDao icd = new CategoryDaoImpl();
+	private static ICategoryDao iCateD = new CategoryDaoImpl();
 	/* (非 Javadoc)  
 	 * <p>Title: getCategoryMap</p>  
 	 * <p>Description: </p>  
@@ -38,7 +38,7 @@ public class CategoryBizImpl implements ICategoryBiz {
 	public Map<Category, List<Category>> getCategoryMap() {
 		List<Category> parentList = null;
 		try {
-			parentList = icd.getParentCategory();
+			parentList = iCateD.getParentCategory();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -46,7 +46,7 @@ public class CategoryBizImpl implements ICategoryBiz {
 		for (Category category : parentList) {
 			List<Category> childList = null;
 			try {
-				childList = icd.getChildCategory(category);
+				childList = iCateD.getChildCategory(category);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

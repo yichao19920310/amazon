@@ -113,4 +113,14 @@ public interface IProductDao {
 	
 	List<Product> getProductQueryListByName(int start, int end, String qname) throws SQLException;
 
+	/**  
+	 * @Title: minusProductStock  
+	 * @Description: 减少商品数量  
+	 * @param pid
+	 * @param quantity
+	 * @return 返回类型int        
+	 * @throws SQLException 
+	 */  
+	int minusProductStock(int pid, int quantity) throws SQLException;
+
 }
