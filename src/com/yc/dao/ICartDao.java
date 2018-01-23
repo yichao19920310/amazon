@@ -80,4 +80,23 @@ public interface ICartDao {
 	 */  
 	int updateCartById(int cartId, int quantity) throws SQLException;
 
+	/**
+	 * @throws SQLException   
+	 * @Title: deleteCartById  
+	 * @Description: 通过id删除购物车
+	 * @param cartId
+	 * @return 返回类型int        
+	 * @throws  
+	 */  
+	int deleteCartById(int cartId) throws SQLException;
+
+	/**  
+	 * @Title: deleteCartByUser  
+	 * @Description: 结算后清空用户购物车  
+	 * @param ho_user_id 用户id
+	 * @return 返回类型int        
+	 * @throws SQLException 
+	 */  
+	int deleteCartByUser(int ho_user_id) throws SQLException;
+
 }

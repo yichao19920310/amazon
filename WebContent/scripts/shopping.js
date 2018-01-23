@@ -96,7 +96,25 @@ function buttonTest(id) {
 }
 
 
-
+function checkCart(){
+	var flag = false;
+	$.ajax({
+		url:"doAction?action=checkCart",// 请求的servlet地址
+		type:"POST",// 请求方式
+		dataType:"text",// 设置返回数据类型
+		async:false,
+		success:function(msg) {
+			if(msg==1){
+				flag = true;
+			}else{				
+				flag = false;
+				alert("您的购物车空空如也,赶快去挑选商品吧!");
+			}
+			
+		}
+	});
+	return flag;
+}
 
 
 

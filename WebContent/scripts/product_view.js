@@ -36,7 +36,7 @@ function goingToBuy(pid) {
 		alert("该商品无货!");
 	}else{
 		var $count = $("#count").val();
-		window.location.href="doAction?action=buyProduct&pid="+pid+"&count="+$count;
+		window.location.href="doAction?action=gointToBuy&pid="+pid+"&count="+$count;
 	}
 	//window.location.href="goingToBuy?"+pid+"_"+$("#count").val();
 	

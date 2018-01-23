@@ -41,6 +41,9 @@ public class CartBizImpl implements ICartBiz {
 	*/  
 	@Override
 	public List<Cart> showCart(User user) {
+		if(user==null){
+			return null;
+		}
 		List<Cart> cartList = null;
 		try {
 			cartList = iCartD.getCartByUser(user.getHu_user_id());
@@ -140,6 +143,43 @@ public class CartBizImpl implements ICartBiz {
 			JDBCUtils.beginTransaction();//开启事务
 			row += iProdD.minusProductStock(cart.getPid(),change);				
 			row += iCartD.updateCartById(cartId,quantity);
+			JDBCUtils.commitTransaction();//提交事务
+		} catch (SQLException e) {
+			e.printStackTrace();
+			try {
+				JDBCUtils.rollbackTransaction();//回滚事务
+			} catch (SQLException e1) {
+			}
+		}
+		if(row==2){
+			return true;
+		}
+		return false;
+	}
+	/* (非 Javadoc)  
+	 * <p>Title: deleteCart</p>  
+	 * <p>Description: </p>  
+	 * @param cartId
+	 * @return  
+	 * @see com.yc.biz.ICartBiz#deleteCart(int)  
+	*/  
+	@Override
+	public boolean deleteCart(int cartId) {
+		Cart cart = null;
+		try {
+			cart = iCartD.getCartById(cartId);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		if(cart==null){
+			return false;
+		}
+		int change = - cart.getQuantity();
+		int row = 0;			
+		try {
+			JDBCUtils.beginTransaction();//开启事务
+			row += iCartD.deleteCartById(cartId);
+			row += iProdD.minusProductStock(cart.getPid(),change);							
 			JDBCUtils.commitTransaction();//提交事务
 		} catch (SQLException e) {
 			e.printStackTrace();

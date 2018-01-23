@@ -31,8 +31,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				<div class="msg">
 					<p>恭喜：购买成功！</p>
 					<p>正在查看最新订单...</p>
+					<input type="hidden" value="${oid}" id="oid"/>
 					<script type="text/javascript">
-						setTimeout("location.href='orders_view.jsp'", 3000);
+						setTimeout("location.href='doAction?action=showOrder&oid="+$("#oid").val()+"'", 3000);
 					</script>
 				</div>
 			</div>

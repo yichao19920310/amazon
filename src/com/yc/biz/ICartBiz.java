@@ -52,4 +52,13 @@ public interface ICartBiz {
 	 */  
 	boolean changeCartCount(int cartId, int quantity);
 
+	/**  
+	 * @Title: deleteCart  
+	 * @Description: 删除购物车  
+	 * @param cartId
+	 * @return 返回类型boolean        
+	 * @throws  
+	 */  
+	boolean deleteCart(int cartId);
+
 }

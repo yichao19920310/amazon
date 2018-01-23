@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,17 +18,21 @@ import javax.servlet.http.HttpServletResponse;
 import com.yc.bean.Cart;
 import com.yc.bean.Category;
 import com.yc.bean.News;
+import com.yc.bean.Order;
+import com.yc.bean.OrderDetail;
 import com.yc.bean.Pager;
 import com.yc.bean.Product;
 import com.yc.bean.User;
 import com.yc.biz.ICartBiz;
 import com.yc.biz.ICategoryBiz;
 import com.yc.biz.INewsBiz;
+import com.yc.biz.IOrderBiz;
 import com.yc.biz.IProductBiz;
 import com.yc.biz.IUserBiz;
 import com.yc.biz.impl.CartBizImpl;
 import com.yc.biz.impl.CategoryBizImpl;
 import com.yc.biz.impl.NewsBizImpl;
+import com.yc.biz.impl.OrderBizImpl;
 import com.yc.biz.impl.ProductBizImpl;
 import com.yc.biz.impl.UserBizImpl;
 
@@ -43,6 +48,7 @@ public class ActionServlet extends HttpServlet {
 	private static IProductBiz iProdB = new ProductBizImpl();
 	private static INewsBiz iNewsB = new NewsBizImpl();
 	private static ICartBiz iCartB = new CartBizImpl();
+	private static IOrderBiz iOrdeB = new OrderBizImpl();
 	private static final String USERNAME_IS_EXIST = "1";
 	private static final String USERNAME_IS_NOT_EXIST = "0";
 	private static final String CATE_PARENT = "parent";
@@ -84,17 +90,133 @@ public class ActionServlet extends HttpServlet {
 			case "showCart":
 				showCart(request,response);
 				break;	
-			case "buyProduct":
-				buyProduct(request,response);
+			case "gointToBuy":
+				gointToBuy(request,response);
 				break;
 			case "shoppingCart":
 				shoppingCart(request,response);
 				break;
 			case "changeCartCount":
 				changeCartCount(request,response);
+				break;
+			case "deleteCart":
+				deleteCart(request,response);
+				break;
+			case "doBuy":
+				doBuy(request,response);
+				break;
+			case "checkCart":
+				checkCart(request,response);
+				break;
+			case "showOrder":
+				showOrder(request,response);
+				break;
 			default:
 				break;
 			}
+		}
+		
+	}
+
+	/**
+	 * @throws IOException 
+	 * @throws ServletException   
+	 * @Title: showOrder  
+	 * @Description: 显示最新订单详情  
+	 * @param request
+	 * @param response 返回类型void        
+	 * @throws  
+	 */  
+	private void showOrder(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String oid = request.getParameter("oid");
+		int oId = 0;
+		if(oid!=null && !"".equals(oid)){
+			oId = Integer.parseInt(oid);
+		}
+		Order order = iOrdeB.getOrder(oId);
+		List<OrderDetail> odList = iOrdeB.getOrderDetailList(oId);
+		request.setAttribute("order", order);
+		request.setAttribute("olist", odList);
+		request.getRequestDispatcher("orders_view.jsp").forward(request, response);
+	}
+
+	/**
+	 * @throws IOException   
+	 * @Title: checkCart  
+	 * @Description: 检查购物车是否有商品  
+	 * @param request
+	 * @param response 返回类型void        
+	 * @throws  
+	 */  
+	private void checkCart(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		User user = (User)(request.getSession().getAttribute("user"));
+		List<Cart> cartList = iCartB.showCart(user);
+		//System.out.println(cartList);
+		if(cartList.size()!=0){
+			response.getWriter().write(SUCCESS);
+		}else{
+			response.getWriter().write(FAILED);
+		}
+	}
+
+	/**
+	 * @throws ServletException 
+	 * @throws IOException   
+	 * @Title: doBuy  
+	 * @Description: 结算购物车 
+	 * @param request
+	 * @param response 返回类型void        
+	 * @throws  
+	 */  
+	private void doBuy(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		User user = (User)(request.getSession().getAttribute("user"));
+		String[] pidArray = request.getParameterValues("pId");
+		String[] costArray = request.getParameterValues("sumPrice");
+		String[] quantityArray = request.getParameterValues("number");
+		Order order = null;
+		List<OrderDetail> odList = new ArrayList<>();
+		float totalCost = 0.0F;
+		if(user!=null && pidArray!=null && costArray!=null && quantityArray!=null){
+			for(int i = 0; i < pidArray.length; i++){
+				int pid = Integer.parseInt(pidArray[i]);
+				float cost = Float.parseFloat(costArray[i]);
+				int quantity = Integer.parseInt(quantityArray[i]);
+				OrderDetail od = new OrderDetail(pid,quantity,cost);
+				odList.add(od);
+				totalCost += cost;
+			}
+			order = new Order(user.getHu_user_id(),user.getHu_user_name(),
+					user.getHu_address(),totalCost);			
+		}
+		int oid = iOrdeB.createOrder(order, odList);
+		if(oid!=-1){
+			request.setAttribute("oid", oid);
+			request.getRequestDispatcher("shopping-result.jsp").forward(request, response);
+		}else{
+			response.getWriter().write("<script>alert('购买失败!#>_<#');document.location.href='doAction?action=showCart';</script>");
+		}
+		
+	}
+
+	/**
+	 * @throws IOException   
+	 * @Title: deleteCart  
+	 * @Description: 删除购物车 
+	 * @param request
+	 * @param response 返回类型void        
+	 * @throws  
+	 */  
+	private void deleteCart(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String cid = request.getParameter("cid");
+		int cartId = 0;
+		if(cid!=null && !"".equals(cid)){
+			cartId = Integer.parseInt(cid);
+		}
+		boolean isSuccess = iCartB.deleteCart(cartId);
+		if(isSuccess){
+			response.getWriter().write(SUCCESS);
+		}else{
+			response.getWriter().write(FAILED);
 		}
 		
 	}
@@ -129,7 +251,7 @@ public class ActionServlet extends HttpServlet {
 	/**
 	 * @throws IOException   
 	 * @Title: shoppingCart  
-	 * @Description: 添加到购物车 
+	 * @Description: 添加商品到购物车 
 	 * @param request
 	 * @param response 返回类型void        
 	 * @throws  
@@ -158,14 +280,15 @@ public class ActionServlet extends HttpServlet {
 		}
 	}
 
-	/**  
-	 * @Title: buyProduct  
-	 * @Description: 购买单个商品 
+	/**
+	 * @throws IOException   
+	 * @Title: gointToBuy  
+	 * @Description: 添加商品到购物车并转到购物车界面
 	 * @param request
 	 * @param response 返回类型void        
 	 * @throws  
 	 */  
-	private void buyProduct(HttpServletRequest request, HttpServletResponse response) {
+	private void gointToBuy(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String pid = request.getParameter("pid");
 		int pId = 0;
 		if(pid!=null && !"".equals(pid)){
@@ -177,10 +300,26 @@ public class ActionServlet extends HttpServlet {
 			counts = Integer.parseInt(count);
 		}
 		User user = (User)(request.getSession().getAttribute("user"));		
-		Cart cart = null;
+		boolean isSuccess = false; 
 		if(user!=null){
-			//unfinished
+			Cart cart = new Cart(pId,counts,user.getHu_user_id());
+			isSuccess = iCartB.addCart(cart);
 		}
+		if(isSuccess){
+			response.getWriter().write("<script>document.location.href='doAction?action=showCart';</script>");
+		}else{
+			response.getWriter().write("<script>alert('操作失败!');document.location.href='doAction?action=shoppingCart';</script>");
+		}
+		/*if(user!=null){
+			int userId = user.getHu_user_id();
+			Product product = iProdB.showProductById(pId);
+			float cost = product.getHp_price()*counts;
+			OrderDetail od = new OrderDetail(pId,counts,cost);
+			List<OrderDetail> odList = new ArrayList<>();
+			odList.add(od);
+			Order order = new Order(user.getHu_user_id(),user.getHu_user_name(),user.getHu_address(),cost); 
+			isSuccess = iOrdeB.createOrder(order,odList);
+		}*/
 		
 		
 	}

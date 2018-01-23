@@ -130,4 +130,35 @@ public class CartDaoImpl implements ICartDao {
 		return run.update(JDBCUtils.getConnection(),sql,quantity,cartId);
 	}
 
+	/* (非 Javadoc)  
+	 * <p>Title: deleteCartById</p>  
+	 * <p>Description: </p>  
+	 * @param cartId
+	 * @return  
+	 * @see com.yc.dao.ICartDao#deleteCartById(int)  
+	*/  
+	@Override
+	public int deleteCartById(int cartId) throws SQLException {
+		QueryRunner run =  new QueryRunner();//事务用这个
+		String sql = "DELETE FROM HWUA_CART "
+				+ "WHERE ID = ?";
+		return run.update(JDBCUtils.getConnection(),sql,cartId);
+	}
+
+	/* (非 Javadoc)  
+	 * <p>Title: deleteCartByUser</p>  
+	 * <p>Description: </p>  
+	 * @param ho_user_id
+	 * @return
+	 * @throws SQLException  
+	 * @see com.yc.dao.ICartDao#deleteCartByUser(int)  
+	*/  
+	@Override
+	public int deleteCartByUser(int ho_user_id) throws SQLException {
+		QueryRunner run =  new QueryRunner();//事务用这个
+		String sql = "DELETE FROM HWUA_CART "
+				+ "WHERE USERID = ?";
+		return run.update(JDBCUtils.getConnection(), sql, ho_user_id);
+	}
+
 }

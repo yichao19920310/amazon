@@ -23,7 +23,7 @@
 </div>
 <div class="wrap">
 	<div id="shopping">
-		<form action="doAction?action=doBuy" method="post">
+		<form action="doAction?action=doBuy" method="post" onsubmit="return checkCart()">
 			<table id="tb_1">
 				<tr>
 					<th>商品名称</th>
