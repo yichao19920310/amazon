@@ -32,7 +32,7 @@ function addToCart(pid) {
 
 function goingToBuy(pid) {
 	var $stock = $("#stock").text();
-	if($stock==0){
+	if($stock==null||$stock==0){
 		alert("该商品无货!");
 	}else{
 		var $count = $("#count").val();
@@ -68,10 +68,17 @@ function add(){
 
 
 function checkStock(){
-	var stock=$("#stock").html()
-	var old=$("#count").val()
-	if(parseInt(old)>parseInt(stock)){
-		alert("您选择的数量超过库存!")
+	var stock=$("#stock").html();
+	var old=$("#count").val();
+	var check = /^-?[0-9]{1,5}d*$/;
+	if(check.test(old)==false){00
+		alert("输入有误!");
+		$("#count").val(1);
+	}else if(parseInt(old)<1){
+		$("#count").val(1);
+	}else if(parseInt(old)>parseInt(stock)){		
+		alert("您选择的数量超过库存!");
+		$("#count").val(stock);
 	}
 }
 

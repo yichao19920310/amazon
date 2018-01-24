@@ -150,6 +150,10 @@ public class ActionServlet extends HttpServlet {
 	 */  
 	private void checkCart(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		User user = (User)(request.getSession().getAttribute("user"));
+		if(user==null){
+			response.getWriter().write("<script>alert('登录失效,请重新登录!');window.location.href='login.jsp'</script>");
+			return;
+		}
 		List<Cart> cartList = iCartB.showCart(user);
 		//System.out.println(cartList);
 		if(cartList.size()!=0){
@@ -170,6 +174,10 @@ public class ActionServlet extends HttpServlet {
 	 */  
 	private void doBuy(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		User user = (User)(request.getSession().getAttribute("user"));
+		if(user==null){
+			response.getWriter().write("<script>alert('登录失效,请重新登录!');window.location.href='login.jsp'</script>");
+			return;
+		}
 		String[] pidArray = request.getParameterValues("pId");
 		String[] costArray = request.getParameterValues("sumPrice");
 		String[] quantityArray = request.getParameterValues("number");
@@ -267,7 +275,11 @@ public class ActionServlet extends HttpServlet {
 		if(count!=null && !"".equals(count)){
 			counts = Integer.parseInt(count);
 		}
-		User user = (User)(request.getSession().getAttribute("user"));		
+		User user = (User)(request.getSession().getAttribute("user"));
+		if(user==null){
+			response.getWriter().write("<script>alert('登录失效,请重新登录!');window.location.href='login.jsp'</script>");
+			return;
+		}
 		boolean isSuccess = false;
 		if(user!=null){
 			Cart cart = new Cart(pId,counts,user.getHu_user_id());
@@ -299,7 +311,11 @@ public class ActionServlet extends HttpServlet {
 		if(count!=null && !"".equals(count)){
 			counts = Integer.parseInt(count);
 		}
-		User user = (User)(request.getSession().getAttribute("user"));		
+		User user = (User)(request.getSession().getAttribute("user"));	
+		if(user==null){
+			response.getWriter().write("<script>alert('登录失效,请重新登录!');window.location.href='login.jsp'</script>");
+			return;
+		}
 		boolean isSuccess = false; 
 		if(user!=null){
 			Cart cart = new Cart(pId,counts,user.getHu_user_id());
@@ -308,7 +324,7 @@ public class ActionServlet extends HttpServlet {
 		if(isSuccess){
 			response.getWriter().write("<script>document.location.href='doAction?action=showCart';</script>");
 		}else{
-			response.getWriter().write("<script>alert('操作失败!');document.location.href='doAction?action=shoppingCart';</script>");
+			response.getWriter().write("<script>alert('操作失败!');document.location.href='doAction?action=productView&pId="+pId+"';</script>");
 		}
 		/*if(user!=null){
 			int userId = user.getHu_user_id();
@@ -335,6 +351,10 @@ public class ActionServlet extends HttpServlet {
 	 */  
 	private void showCart(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User user = (User)(request.getSession().getAttribute("user"));
+		if(user==null){
+			response.getWriter().write("<script>alert('登录失效,请重新登录!');window.location.href='login.jsp'</script>");
+			return;
+		}
 		List<Cart> cart = null;
 		if(user!=null){
 			cart = iCartB.showCart(user);
@@ -356,8 +376,8 @@ public class ActionServlet extends HttpServlet {
 	
 	private void productView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//又要显示上方热卖
-		List<Product> hotProducts = iProdB.showHotProduct();
-		request.setAttribute("hotProducts", hotProducts);
+		/*List<Product> hotProducts = iProdB.showHotProduct();
+		request.setAttribute("hotProducts", hotProducts);*/
 		//主体
 		String pId = request.getParameter("pId");
 		int pid = 0;
@@ -395,6 +415,9 @@ public class ActionServlet extends HttpServlet {
 		//又要显示新闻列表
 		List<News> newsList = iNewsB.getAllNews();
 		request.setAttribute("newsList", newsList);
+		//导航栏的热卖
+		/*List<Product> hotProducts = iProdB.showHotProduct();
+		request.setAttribute("hotProducts", hotProducts);*/
 		//主体
 		String nid = request.getParameter("nid");
 		int nId = 0;
@@ -424,8 +447,8 @@ public class ActionServlet extends HttpServlet {
 		List<News> newsList = iNewsB.getAllNews();
 		request.setAttribute("newsList", newsList);
 		//热卖
-		List<Product> hotProducts = iProdB.showHotProduct();
-		request.setAttribute("hotProducts", hotProducts);
+		/*List<Product> hotProducts = iProdB.showHotProduct();
+		request.setAttribute("hotProducts", hotProducts);*/
 		//商品列表
 		String cate = request.getParameter("cate");
 		if(cate==null||CATE_ALL.equals(cate)){

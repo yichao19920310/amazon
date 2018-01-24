@@ -20,7 +20,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <body>
 <%@ include file="index_top.jsp"  %>
 <div id="position" class="wrap">
-	您现在的位置：<a href="ProductServlet">亚马逊</a> &gt; 购物车
+	您现在的位置：<a href="doAction">亚马逊</a> &gt; 购物车
 </div>
 <div class="wrap">
 	<div id="shopping">

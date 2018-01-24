@@ -20,7 +20,7 @@ import javax.servlet.annotation.WebFilter;
 
 /**  
 * @ClassName: EncodingFilter  
-* @Description: TODO(这里用一句话描述这个类的作用)  
+* @Description: 全局编码拦截  
 * @author admin  
 * @date 2018年1月8日  
 *    

@@ -51,7 +51,7 @@
 							<input id="${hcid }" type="text" name="number" value="${shopping.quantity }" maxlength="5"
 							size="1"  style="text-align:center; vertical-align:middle" onblur="checkStock(${hcid })"/>
 							<input type="button" id="add" value=" + " width="2px" onclick=" increase(${hcid })" name="addButton">		
-							
+							<input id="old_${hcid }" type="hidden" value="${shopping.quantity }"/>
 						
 					</td>
 					<td class="delete"><a href="javascript:deleteCart(${shopping.id})">删除</a></td>

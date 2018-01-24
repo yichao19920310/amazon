@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
@@ -155,12 +156,42 @@ public class ProductDaoImpl implements IProductDao {
 	*/  
 	@Override
 	public List<Product> getHotProduct() throws SQLException {
-		QueryRunner run = JDBCUtils.getQueryRunner();
-		String sql = "SELECT HP_ID,HP_NAME,HP_DESCRIPTION,HP_PRICE,"
+		Connection conn = JDBCUtils.getConnection();
+		String sql1 = "SELECT * FROM "
+				+"(SELECT T.HP_ID,T.S FROM "
+				+"(SELECT HP_ID,SUM(HOD_QUANTITY) S from HWUA_ORDER_DETAIL GROUP BY HP_ID) T "
+				+"ORDER BY T.S DESC) TT "
+				+"WHERE ROWNUM <= 5";
+		//欲
+		PreparedStatement ps = conn.prepareStatement(sql1);
+		//执
+		ResultSet rs = ps.executeQuery();
+		//事
+		List<Integer> pidList = new ArrayList<>();
+		while(rs.next()){
+			int pid = rs.getInt(1);
+			pidList.add(pid);
+			System.out.println(pid);
+		}
+		//毙
+		rs.close();
+		ps.close();
+		conn.close();
+		/*String sql = "SELECT HP_ID,HP_NAME,HP_DESCRIPTION,HP_PRICE,"
 				+ "HP_STOCK,HPC_ID,HPC_CHILD_ID,HP_FILE_NAME "
 				+ "FROM (SELECT HWUA_PRODUCT.* FROM HWUA_PRODUCT ORDER BY HWUA_PRODUCT.HP_PRICE DESC) "
-				+ "WHERE ROWNUM <= 10";
-		return run.query(sql, new BeanListHandler<>(Product.class));
+				+ "WHERE ROWNUM <= 10";*/
+		String sql = "SELECT HP_ID,HP_NAME,HP_DESCRIPTION,HP_PRICE,"
+				+ "HP_STOCK,HPC_ID,HPC_CHILD_ID,HP_FILE_NAME "
+				+ "FROM HWUA_PRODUCT "
+				+ "WHERE HP_ID = ?";
+		List<Product> pList = new ArrayList<>();
+		for (Integer pid : pidList) {
+			QueryRunner run = JDBCUtils.getQueryRunner();
+			Product product = run.query(sql, new BeanHandler<>(Product.class),pid);
+			pList.add(product);
+		}
+		return pList;
 	}
 
 	/* (non-Javadoc)
